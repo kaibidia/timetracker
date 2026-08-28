@@ -190,6 +190,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = TimeFlow;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "TimeFlow uses your approximate location only to match its light and dark appearance to your local sunrise and sunset.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
@@ -216,6 +217,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = TimeFlow;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "TimeFlow uses your approximate location only to match its light and dark appearance to your local sunrise and sunset.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
