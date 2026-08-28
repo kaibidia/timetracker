@@ -10,6 +10,8 @@ public struct DaySegment: Identifiable, Sendable {
     public let id: UUID
     public let period: PersistentIdentifier
     public let activityName: String?
+    public let activityIcon: String?
+    public let activityColorHex: String?
     public let displayStart: Date
     public let displayEnd: Date
     /// The stored period started before `displayStart` (previous day).
@@ -27,6 +29,8 @@ public struct DaySegment: Identifiable, Sendable {
         id: UUID = UUID(),
         period: PersistentIdentifier,
         activityName: String?,
+        activityIcon: String? = nil,
+        activityColorHex: String? = nil,
         displayStart: Date,
         displayEnd: Date,
         continuesFromPreviousDay: Bool,
@@ -36,6 +40,8 @@ public struct DaySegment: Identifiable, Sendable {
         self.id = id
         self.period = period
         self.activityName = activityName
+        self.activityIcon = activityIcon
+        self.activityColorHex = activityColorHex
         self.displayStart = displayStart
         self.displayEnd = displayEnd
         self.continuesFromPreviousDay = continuesFromPreviousDay
@@ -75,6 +81,8 @@ public enum DayTimeline {
                 DaySegment(
                     period: period.persistentModelID,
                     activityName: period.activity?.name,
+                    activityIcon: period.activity?.iconSystemName,
+                    activityColorHex: period.activity?.colorHex,
                     displayStart: clampedStart,
                     displayEnd: clampedEnd,
                     continuesFromPreviousDay: period.startTime < dayStart,

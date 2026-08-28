@@ -39,3 +39,12 @@ enum Clock {
 extension Activity {
     var color: Color { Color(hex: colorHex) }
 }
+
+// MARK: - Local settings
+
+/// `UserDefaults`-backed preference keys (via `@AppStorage`).
+enum AppSettings {
+    /// Today timeline: scale each interval's vertical space by its duration.
+    static let scaleTimelineByDuration = "timeline.scaleByDuration"
+    static let scaleTimelineByDurationDefault = true
+}

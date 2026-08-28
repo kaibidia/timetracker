@@ -52,6 +52,10 @@ final class AppearanceModel: NSObject, CLLocationManagerDelegate {
     // MARK: - Location
 
     private func requestLocationIfPossible() {
+        #if DEBUG
+        let args = ProcessInfo.processInfo.arguments
+        if args.contains("-ForceDay") || args.contains("-ForceNight") { return }
+        #endif
         switch manager.authorizationStatus {
         case .notDetermined:
             manager.requestWhenInUseAuthorization()

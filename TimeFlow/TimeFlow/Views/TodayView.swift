@@ -7,8 +7,12 @@ import TimeFlowCore
 struct TodayView: View {
     @Environment(TimelineStore.self) private var store
 
+    @AppStorage(AppSettings.scaleTimelineByDuration)
+    private var scaleByDuration = AppSettings.scaleTimelineByDurationDefault
+
     @State private var labelingPeriodID: PersistentIdentifier?
     @State private var editingPeriodID: PersistentIdentifier?
+    @State private var showingSettings = false
     @State private var undoDismissTask: Task<Void, Never>?
 
     var body: some View {
@@ -24,6 +28,9 @@ struct TodayView: View {
         .sheet(item: editingBinding) { period in
             PeriodEditorSheet(period: period)
                 .environment(store)
+        }
+        .sheet(isPresented: $showingSettings) {
+            SettingsSheet()
         }
         .onChange(of: store.lastCapture?.at) { _, newValue in
             undoDismissTask?.cancel()
@@ -61,6 +68,7 @@ struct TodayView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 20)
                     .padding(.bottom, 40)
+                    .animation(.easeInOut(duration: 0.3), value: scaleByDuration)
             }
         }
         .overlay(alignment: .bottom) {
@@ -81,6 +89,14 @@ struct TodayView: View {
                 .font(.headline)
                 .foregroundStyle(AutumnTheme.primaryText)
             Spacer()
+            Button {
+                showingSettings = true
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.body)
+                    .foregroundStyle(AutumnTheme.secondaryText)
+            }
+            .accessibilityLabel("Settings")
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 14)
@@ -124,7 +140,10 @@ struct TodayView: View {
                             segment: segment,
                             now: now,
                             isCurrent: segment.isOpen,
-                            isLast: index == segments.count - 1
+                            isLast: index == segments.count - 1,
+                            scaledHeight: scaleByDuration
+                                ? CGFloat(TimelineScale.segmentHeight(forDuration: segment.displayDuration))
+                                : nil
                         )
                         .contentShape(Rectangle())
                         .onTapGesture { labelingPeriodID = period.persistentModelID }

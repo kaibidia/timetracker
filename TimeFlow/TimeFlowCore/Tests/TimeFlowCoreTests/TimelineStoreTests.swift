@@ -310,6 +310,7 @@ struct TimelineStoreTests {
         let fridayCrossing = friday.first { $0.period == crossing.persistentModelID }!
         #expect(fridayCrossing.displayStart == date(2026, 8, 28, 23, 30))
         #expect(fridayCrossing.displayEnd == date(2026, 8, 29, 0, 0))
+        #expect(fridayCrossing.displayDuration == 30 * 60) // timeline scales this, not the full span
         #expect(fridayCrossing.continuesIntoNextDay)
 
         let saturday = DayTimeline.segments(
@@ -319,6 +320,7 @@ struct TimelineStoreTests {
         let saturdayCrossing = saturday.first { $0.period == crossing.persistentModelID }!
         #expect(saturdayCrossing.displayStart == date(2026, 8, 29, 0, 0))
         #expect(saturdayCrossing.displayEnd == date(2026, 8, 29, 0, 45))
+        #expect(saturdayCrossing.displayDuration == 45 * 60)
         #expect(saturdayCrossing.continuesFromPreviousDay)
 
         // Visual split did not mutate stored data.
