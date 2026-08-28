@@ -34,6 +34,20 @@ enum AutumnTheme {
     ]
 }
 
+/// The palette follows the clock, not the system appearance: the light
+/// (cream) palette during the day, the dark (deep plum) palette at night.
+enum DayNight {
+    /// Daytime is 07:00–18:59 local; everything else is night.
+    static func colorScheme(at date: Date = .now, calendar: Calendar = .current) -> ColorScheme {
+        #if DEBUG
+        let args = ProcessInfo.processInfo.arguments
+        if args.contains("-ForceNight") { return .dark }
+        if args.contains("-ForceDay") { return .light }
+        #endif
+        return (7..<19).contains(calendar.component(.hour, from: date)) ? .light : .dark
+    }
+}
+
 extension Color {
     init(light: UInt, dark: UInt) {
         self.init(uiColor: UIColor { traits in
