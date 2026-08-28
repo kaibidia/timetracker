@@ -6,9 +6,9 @@ import TimeFlowCore
 /// The rail reads top-down: a marker, then a connector line dropping to the
 /// next marker. The **current** (open) activity is always the topmost row —
 /// its marker is a hollow orange ring with nothing above it (the timeline
-/// begins here), and the line *below* it is bright orange to signify the
-/// activity in progress. Completed activities use a filled orange dot; the
-/// lines between them are the same orange at low opacity.
+/// begins here), and the line *below* it is a pale orange (the still-forming
+/// live segment). Completed activities use a filled orange dot, connected by
+/// the same orange at full strength. All connectors are the same width.
 ///
 /// Visual only — ordering, timestamps, durations, and transitions are unchanged.
 struct TimelineRow: View {
@@ -62,8 +62,8 @@ struct TimelineRow: View {
                 .padding(.top, 3)
             if !isLast {
                 Rectangle()
-                    .fill(AutumnTheme.accent.opacity(isCurrent ? 1.0 : 0.25))
-                    .frame(width: isCurrent ? 3 : 2)
+                    .fill(AutumnTheme.accent.opacity(isCurrent ? 0.25 : 1.0))
+                    .frame(width: 2.5)
                     .frame(maxHeight: .infinity)
             }
         }
