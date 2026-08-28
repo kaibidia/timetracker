@@ -1,14 +1,25 @@
 import SwiftUI
 import TimeFlowCore
 
-/// One period on the daily timeline, drawn to read as a span *between two points
-/// in time*: a dot at the start, a connector, and (for the open period) a hollow
-/// "now" marker.
+/// One period on the daily timeline.
+///
+/// The rail reads top-down: a marker, then a connector line dropping to the
+/// next marker. The **current** (open) activity is always the topmost row —
+/// its marker is a hollow orange ring with nothing above it (the timeline
+/// begins here), and the line *below* it is bright orange to signify the
+/// activity in progress. Completed activities use a filled orange dot; the
+/// lines between them are the same orange at low opacity.
+///
+/// Visual only — ordering, timestamps, durations, and transitions are unchanged.
 struct TimelineRow: View {
     let segment: DaySegment
     let now: Date
-    let isFirst: Bool
+    /// This row is the live/open activity (topmost).
+    let isCurrent: Bool
+    /// This row is the last one shown, so it has no connector below it.
     let isLast: Bool
+
+    private let markerDiameter: CGFloat = 11
 
     private var endLabel: String {
         if segment.isOpen { return "NOW" }
@@ -47,20 +58,29 @@ struct TimelineRow: View {
 
     private var rail: some View {
         VStack(spacing: 0) {
-            Circle()
-                .fill(AutumnTheme.accent)
-                .frame(width: 9, height: 9)
-                .padding(.top, 4)
-            Rectangle()
-                .fill(AutumnTheme.hairline)
-                .frame(width: 2)
-                .frame(maxHeight: .infinity)
-            if segment.isOpen {
-                Circle()
-                    .strokeBorder(AutumnTheme.accent, lineWidth: 2)
-                    .frame(width: 11, height: 11)
+            marker
+                .padding(.top, 3)
+            if !isLast {
+                Rectangle()
+                    .fill(AutumnTheme.accent.opacity(isCurrent ? 1.0 : 0.25))
+                    .frame(width: isCurrent ? 3 : 2)
+                    .frame(maxHeight: .infinity)
             }
         }
         .frame(width: 12)
+    }
+
+    @ViewBuilder
+    private var marker: some View {
+        if isCurrent {
+            // Hollow ring — the open beginning of the live timeline.
+            Circle()
+                .strokeBorder(AutumnTheme.accent, lineWidth: 2)
+                .frame(width: markerDiameter, height: markerDiameter)
+        } else {
+            Circle()
+                .fill(AutumnTheme.accent)
+                .frame(width: markerDiameter, height: markerDiameter)
+        }
     }
 }

@@ -123,7 +123,7 @@ struct TodayView: View {
                         TimelineRow(
                             segment: segment,
                             now: now,
-                            isFirst: index == 0,
+                            isCurrent: segment.isOpen,
                             isLast: index == segments.count - 1
                         )
                         .contentShape(Rectangle())
