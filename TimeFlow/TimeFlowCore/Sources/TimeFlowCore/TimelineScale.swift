@@ -27,10 +27,6 @@ public enum TimelineScale {
     public static let maxHeight: Double = 300
     public static let halfSaturationMinutes: Double = 75
 
-    /// Below this height a row should use its compact single-line presentation.
-    /// Corresponds to roughly a 20-minute interval.
-    public static let compactHeightThreshold: Double = 96
-
     public static func segmentHeight(forDuration seconds: TimeInterval) -> Double {
         let minutes = max(0, seconds / 60)
         let fraction = minutes / (minutes + halfSaturationMinutes)

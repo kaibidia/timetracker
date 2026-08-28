@@ -21,7 +21,7 @@ struct TimelineScaleTests {
     func floor() {
         #expect(h(0) == TimelineScale.minHeight)
         #expect(h(1) >= TimelineScale.minHeight)
-        #expect(h(2) < TimelineScale.compactHeightThreshold) // 2 min → compact layout
+        #expect(h(2) - TimelineScale.minHeight < 10) // barely above the floor
     }
 
     @Test("Very long intervals are compressed and capped")

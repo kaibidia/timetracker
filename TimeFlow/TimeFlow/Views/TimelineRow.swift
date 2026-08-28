@@ -10,11 +10,11 @@ import TimeFlowCore
 /// live segment). Completed activities use a filled orange dot, connected by
 /// the same orange at full strength. All connectors are the same width.
 ///
-/// When `scaledHeight` is supplied, the connector is drawn at exactly that
-/// height so the vertical distance between two timestamp nodes reflects the
-/// interval's duration (see `TimelineScale`). Short segments switch to a
-/// compact single-line label so the row never has to grow just to fit its
-/// text. When `scaledHeight` is nil the row keeps its original compact layout.
+/// Every row uses the **same** text layout regardless of duration:
+/// a timestamp line, then `[icon] Name · duration` on one line. When
+/// `scaledHeight` is supplied the connector is drawn at that height so the
+/// vertical gap between two nodes reflects the interval's duration
+/// (`TimelineScale`) — but the label never changes shape because of it.
 ///
 /// Visual only — ordering, timestamps, durations, and transitions are unchanged.
 struct TimelineRow: View {
@@ -24,17 +24,10 @@ struct TimelineRow: View {
     let isCurrent: Bool
     /// This row is the last one shown.
     let isLast: Bool
-    /// Duration-scaled connector height, or nil for the original layout.
+    /// Duration-scaled connector height, or nil for the original spacing.
     var scaledHeight: CGFloat? = nil
 
     private let markerDiameter: CGFloat = 11
-
-    private var scaled: Bool { scaledHeight != nil }
-
-    private var isCompact: Bool {
-        guard let scaledHeight else { return false }
-        return scaledHeight < CGFloat(TimelineScale.compactHeightThreshold)
-    }
 
     private var endLabel: String {
         if segment.isOpen { return "NOW" }
@@ -56,83 +49,35 @@ struct TimelineRow: View {
         }
     }
 
-    // MARK: - Content
+    // MARK: - Content (identical for every row)
 
-    @ViewBuilder
     private var content: some View {
-        if !scaled {
-            originalContent
-        } else if isCompact {
-            compactContent
-        } else {
-            spaciousContent
-        }
-    }
-
-    private var originalContent: some View {
-        VStack(alignment: .leading, spacing: 3) {
-            timesRow(.subheadline)
-            Text(name)
-                .font(.body.weight(.semibold))
-                .foregroundStyle(nameColor)
-            Text(DurationFormat.short(segment.displayDuration))
-                .font(.footnote)
-                .foregroundStyle(AutumnTheme.secondaryText)
-        }
-        .padding(.bottom, 18)
-    }
-
-    private var spaciousContent: some View {
         VStack(alignment: .leading, spacing: 4) {
-            timesRow(.subheadline)
-            HStack(spacing: 7) {
-                activityIcon
-                Text(name)
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(nameColor)
+            HStack {
+                Text(startLabel)
+                Spacer(minLength: 12)
+                Text(endLabel)
             }
-            Text(DurationFormat.short(segment.displayDuration))
-                .font(.footnote)
-                .foregroundStyle(AutumnTheme.secondaryText)
-        }
-        .padding(.bottom, 6)
-    }
+            .font(.subheadline.weight(.medium))
+            .foregroundStyle(AutumnTheme.secondaryText)
+            .monospacedDigit()
 
-    private var compactContent: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            timesRow(.caption)
             HStack(spacing: 6) {
-                activityIcon
+                if let icon = segment.activityIcon {
+                    Image(systemName: icon)
+                        .font(.footnote)
+                        .foregroundStyle(segment.activityColorHex.map { Color(hex: $0) } ?? AutumnTheme.accent)
+                }
                 Text(name)
-                    .font(.subheadline.weight(.semibold))
+                    .fontWeight(.semibold)
                     .foregroundStyle(nameColor)
                 Text("· \(DurationFormat.short(segment.displayDuration))")
-                    .font(.footnote)
                     .foregroundStyle(AutumnTheme.secondaryText)
             }
+            .font(.subheadline)
             .lineLimit(1)
         }
-        .padding(.bottom, 4)
-    }
-
-    private func timesRow(_ font: Font) -> some View {
-        HStack {
-            Text(startLabel)
-            Spacer(minLength: 12)
-            Text(endLabel)
-        }
-        .font(font.weight(.medium))
-        .foregroundStyle(AutumnTheme.secondaryText)
-        .monospacedDigit()
-    }
-
-    @ViewBuilder
-    private var activityIcon: some View {
-        if let icon = segment.activityIcon {
-            Image(systemName: icon)
-                .font(.footnote)
-                .foregroundStyle(segment.activityColorHex.map { Color(hex: $0) } ?? AutumnTheme.accent)
-        }
+        .padding(.bottom, scaledHeight == nil ? 18 : 4)
     }
 
     // MARK: - Rail
